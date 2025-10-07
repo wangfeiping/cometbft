@@ -62,13 +62,18 @@ type Provider func(*cfg.Config, log.Logger) (*Node, error)
 // PrivValidator, ClientCreator, GenesisDoc, and DBProvider.
 // It implements NodeProvider.
 func DefaultNewNode(config *cfg.Config, logger log.Logger) (*Node, error) {
-	nodeKey, err := p2p.LoadOrGenNodeKey(config.NodeKeyFile())
+	securityHandler := func([]byte) ([]byte, error) {
+		return nil, fmt.Errorf("security handler not implemented for WAL generator")
+	}
+
+	nodeKey, err := p2p.LoadOrGenNodeKey(config.NodeKeyFile(), securityHandler)
 	if err != nil {
 		return nil, fmt.Errorf("failed to load or gen node key %s: %w", config.NodeKeyFile(), err)
 	}
 
 	return NewNode(config,
-		privval.LoadOrGenFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile()),
+		privval.LoadOrGenFilePV(
+			config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), securityHandler),
 		nodeKey,
 		proxy.DefaultClientCreator(config.ProxyApp, config.ABCI, config.DBDir()),
 		DefaultGenesisDocProviderFunc(config),
