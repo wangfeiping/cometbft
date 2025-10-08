@@ -450,7 +450,7 @@ func loadPrivValidator(config *cfg.Config) *privval.FilePV {
 	privValidatorKeyFile := config.PrivValidatorKeyFile()
 	ensureDir(filepath.Dir(privValidatorKeyFile), 0o700)
 	privValidatorStateFile := config.PrivValidatorStateFile()
-	privValidator := privval.LoadOrGenFilePV(privValidatorKeyFile, privValidatorStateFile, nil)
+	privValidator := privval.LoadOrGenFilePV(privValidatorKeyFile, privValidatorStateFile, nil, nil)
 	privValidator.Reset()
 	return privValidator
 }

@@ -177,28 +177,37 @@ func NewFilePV(privKey crypto.PrivKey, keyFilePath, stateFilePath string) *FileP
 
 // GenFilePV generates a new validator with randomly generated private key
 // and sets the filePaths, but does not call Save().
-func GenFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
+func GenFilePV(keyFilePath, stateFilePath string,
+	encryptHandler func([]byte) ([]byte, error)) *FilePV {
 	return NewFilePV(ed25519.GenPrivKey(), keyFilePath, stateFilePath)
 }
 
 // LoadFilePV loads a FilePV from the filePaths.  The FilePV handles double
 // signing prevention by persisting data to the stateFilePath.  If either file path
 // does not exist, the program will exit.
-func LoadFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
-	return loadFilePV(keyFilePath, stateFilePath, true)
+func LoadFilePV(keyFilePath, stateFilePath string,
+	decryptHandler func([]byte) ([]byte, error)) *FilePV {
+	return loadFilePV(keyFilePath, stateFilePath, true, decryptHandler)
 }
 
 // LoadFilePVEmptyState loads a FilePV from the given keyFilePath, with an empty LastSignState.
 // If the keyFilePath does not exist, the program will exit.
 func LoadFilePVEmptyState(keyFilePath, stateFilePath string) *FilePV {
-	return loadFilePV(keyFilePath, stateFilePath, false)
+	return loadFilePV(keyFilePath, stateFilePath, false, nil)
 }
 
 // If loadState is true, we load from the stateFilePath. Otherwise, we use an empty LastSignState.
-func loadFilePV(keyFilePath, stateFilePath string, loadState bool) *FilePV {
+func loadFilePV(keyFilePath, stateFilePath string, loadState bool,
+	decryptHandler func([]byte) ([]byte, error)) *FilePV {
 	keyJSONBytes, err := os.ReadFile(keyFilePath)
 	if err != nil {
 		cmtos.Exit(err.Error())
+	}
+	if decryptHandler != nil {
+		keyJSONBytes, err = decryptHandler(keyJSONBytes)
+		if err != nil {
+			cmtos.Exit(fmt.Sprintf("Error decrypting PrivValidator key from %v: %v\n", keyFilePath, err))
+		}
 	}
 	pvKey := FilePVKey{}
 	err = cmtjson.Unmarshal(keyJSONBytes, &pvKey)
@@ -234,12 +243,14 @@ func loadFilePV(keyFilePath, stateFilePath string, loadState bool) *FilePV {
 
 // LoadOrGenFilePV loads a FilePV from the given filePaths
 // or else generates a new one and saves it to the filePaths.
-func LoadOrGenFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
+func LoadOrGenFilePV(keyFilePath, stateFilePath string,
+	decryptHandler func([]byte) ([]byte, error),
+	encryptHandler func([]byte) ([]byte, error)) *FilePV {
 	var pv *FilePV
 	if cmtos.FileExists(keyFilePath) {
-		pv = LoadFilePV(keyFilePath, stateFilePath, securityHandler)
+		pv = LoadFilePV(keyFilePath, stateFilePath, decryptHandler)
 	} else {
-		pv = GenFilePV(keyFilePath, stateFilePath, securityHandler)
+		pv = GenFilePV(keyFilePath, stateFilePath, encryptHandler)
 		pv.Save()
 	}
 	return pv

@@ -24,7 +24,7 @@ func genNodeKey(*cobra.Command, []string) error {
 		return fmt.Errorf("node key at %s already exists", nodeKeyFile)
 	}
 
-	nodeKey, err := p2p.LoadOrGenNodeKey(nodeKeyFile, nil)
+	nodeKey, err := p2p.LoadOrGenNodeKey(nodeKeyFile, nil, nil)
 	if err != nil {
 		return err
 	}

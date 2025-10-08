@@ -73,9 +73,9 @@ func TestLoadOrGenValidator(t *testing.T) {
 		t.Error(err)
 	}
 
-	privVal := LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil)
+	privVal := LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil, nil)
 	addr := privVal.GetAddress()
-	privVal = LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil)
+	privVal = LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil, nil)
 	assert.Equal(addr, privVal.GetAddress(), "expected privval addr to be the same")
 }
 

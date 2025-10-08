@@ -45,7 +45,7 @@ func initFilesWithConfig(config *cfg.Config) error {
 	if cmtos.FileExists(nodeKeyFile) {
 		logger.Info("Found node key", "path", nodeKeyFile)
 	} else {
-		if _, err := p2p.LoadOrGenNodeKey(nodeKeyFile, nil); err != nil {
+		if _, err := p2p.LoadOrGenNodeKey(nodeKeyFile, nil, nil); err != nil {
 			return err
 		}
 		logger.Info("Generated node key", "path", nodeKeyFile)

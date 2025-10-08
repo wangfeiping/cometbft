@@ -169,9 +169,9 @@ func NewTendermint(app abci.Application, opts *Options) *nm.Node {
 	}
 	pvKeyFile := config.PrivValidatorKeyFile()
 	pvKeyStateFile := config.PrivValidatorStateFile()
-	pv := privval.LoadOrGenFilePV(pvKeyFile, pvKeyStateFile, nil)
+	pv := privval.LoadOrGenFilePV(pvKeyFile, pvKeyStateFile, nil, nil)
 	papp := proxy.NewLocalClientCreator(app)
-	nodeKey, err := p2p.LoadOrGenNodeKey(config.NodeKeyFile(), nil)
+	nodeKey, err := p2p.LoadOrGenNodeKey(config.NodeKeyFile(), nil, nil)
 	if err != nil {
 		panic(err)
 	}
