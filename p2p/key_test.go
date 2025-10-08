@@ -16,10 +16,10 @@ import (
 func TestLoadOrGenNodeKey(t *testing.T) {
 	filePath := filepath.Join(os.TempDir(), cmtrand.Str(12)+"_peer_id.json")
 
-	nodeKey, err := LoadOrGenNodeKey(filePath)
+	nodeKey, err := LoadOrGenNodeKey(filePath, nil)
 	assert.Nil(t, err)
 
-	nodeKey2, err := LoadOrGenNodeKey(filePath)
+	nodeKey2, err := LoadOrGenNodeKey(filePath, nil)
 	assert.Nil(t, err)
 
 	assert.Equal(t, nodeKey, nodeKey2)
@@ -28,13 +28,13 @@ func TestLoadOrGenNodeKey(t *testing.T) {
 func TestLoadNodeKey(t *testing.T) {
 	filePath := filepath.Join(os.TempDir(), cmtrand.Str(12)+"_peer_id.json")
 
-	_, err := LoadNodeKey(filePath)
+	_, err := LoadNodeKey(filePath, nil)
 	assert.True(t, os.IsNotExist(err))
 
-	_, err = LoadOrGenNodeKey(filePath)
+	_, err = LoadOrGenNodeKey(filePath, nil)
 	require.NoError(t, err)
 
-	nodeKey, err := LoadNodeKey(filePath)
+	nodeKey, err := LoadNodeKey(filePath, nil)
 	assert.NoError(t, err)
 	assert.NotNil(t, nodeKey)
 }

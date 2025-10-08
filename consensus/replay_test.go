@@ -921,7 +921,7 @@ func TestHandshakePanicsIfAppReturnsWrongAppHash(t *testing.T) {
 	//		- 0x03
 	config := ResetConfig("handshake_test_")
 	defer os.RemoveAll(config.RootDir)
-	privVal := privval.LoadFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile())
+	privVal := privval.LoadFilePV(config.PrivValidatorKeyFile(), config.PrivValidatorStateFile(), nil)
 	const appVersion = 0x0
 	stateDB, state, store := stateAndStore(t, config, appVersion)
 	stateStore := sm.NewStore(stateDB, sm.StoreOptions{

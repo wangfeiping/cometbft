@@ -31,11 +31,11 @@ func initFilesWithConfig(config *cfg.Config) error {
 	privValStateFile := config.PrivValidatorStateFile()
 	var pv *privval.FilePV
 	if cmtos.FileExists(privValKeyFile) {
-		pv = privval.LoadFilePV(privValKeyFile, privValStateFile)
+		pv = privval.LoadFilePV(privValKeyFile, privValStateFile, nil)
 		logger.Info("Found private validator", "keyFile", privValKeyFile,
 			"stateFile", privValStateFile)
 	} else {
-		pv = privval.GenFilePV(privValKeyFile, privValStateFile)
+		pv = privval.GenFilePV(privValKeyFile, privValStateFile, nil)
 		pv.Save()
 		logger.Info("Generated private validator", "keyFile", privValKeyFile,
 			"stateFile", privValStateFile)
@@ -45,7 +45,7 @@ func initFilesWithConfig(config *cfg.Config) error {
 	if cmtos.FileExists(nodeKeyFile) {
 		logger.Info("Found node key", "path", nodeKeyFile)
 	} else {
-		if _, err := p2p.LoadOrGenNodeKey(nodeKeyFile); err != nil {
+		if _, err := p2p.LoadOrGenNodeKey(nodeKeyFile, nil); err != nil {
 			return err
 		}
 		logger.Info("Generated node key", "path", nodeKeyFile)

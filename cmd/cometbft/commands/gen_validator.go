@@ -19,7 +19,7 @@ var GenValidatorCmd = &cobra.Command{
 }
 
 func genValidator(*cobra.Command, []string) {
-	pv := privval.GenFilePV("", "")
+	pv := privval.GenFilePV("", "", nil)
 	jsbz, err := cmtjson.Marshal(pv)
 	if err != nil {
 		panic(err)

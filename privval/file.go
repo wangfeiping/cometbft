@@ -177,14 +177,14 @@ func NewFilePV(privKey crypto.PrivKey, keyFilePath, stateFilePath string) *FileP
 
 // GenFilePV generates a new validator with randomly generated private key
 // and sets the filePaths, but does not call Save().
-func GenFilePV(keyFilePath, stateFilePath string) *FilePV {
+func GenFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
 	return NewFilePV(ed25519.GenPrivKey(), keyFilePath, stateFilePath)
 }
 
 // LoadFilePV loads a FilePV from the filePaths.  The FilePV handles double
 // signing prevention by persisting data to the stateFilePath.  If either file path
 // does not exist, the program will exit.
-func LoadFilePV(keyFilePath, stateFilePath string) *FilePV {
+func LoadFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
 	return loadFilePV(keyFilePath, stateFilePath, true)
 }
 
@@ -234,12 +234,12 @@ func loadFilePV(keyFilePath, stateFilePath string, loadState bool) *FilePV {
 
 // LoadOrGenFilePV loads a FilePV from the given filePaths
 // or else generates a new one and saves it to the filePaths.
-func LoadOrGenFilePV(keyFilePath, stateFilePath string) *FilePV {
+func LoadOrGenFilePV(keyFilePath, stateFilePath string, securityHandler func([]byte) ([]byte, error)) *FilePV {
 	var pv *FilePV
 	if cmtos.FileExists(keyFilePath) {
-		pv = LoadFilePV(keyFilePath, stateFilePath)
+		pv = LoadFilePV(keyFilePath, stateFilePath, securityHandler)
 	} else {
-		pv = GenFilePV(keyFilePath, stateFilePath)
+		pv = GenFilePV(keyFilePath, stateFilePath, securityHandler)
 		pv.Save()
 	}
 	return pv

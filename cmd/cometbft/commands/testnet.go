@@ -142,7 +142,7 @@ func testnetFiles(*cobra.Command, []string) error {
 
 		pvKeyFile := filepath.Join(nodeDir, config.BaseConfig.PrivValidatorKey)
 		pvStateFile := filepath.Join(nodeDir, config.BaseConfig.PrivValidatorState)
-		pv := privval.LoadFilePV(pvKeyFile, pvStateFile)
+		pv := privval.LoadFilePV(pvKeyFile, pvStateFile, nil)
 
 		pubKey, err := pv.GetPubKey()
 		if err != nil {
@@ -251,7 +251,7 @@ func persistentPeersString(config *cfg.Config) (string, error) {
 	for i := 0; i < nValidators+nNonValidators; i++ {
 		nodeDir := filepath.Join(outputDir, fmt.Sprintf("%s%d", nodeDirPrefix, i))
 		config.SetRoot(nodeDir)
-		nodeKey, err := p2p.LoadNodeKey(config.NodeKeyFile())
+		nodeKey, err := p2p.LoadNodeKey(config.NodeKeyFile(), nil)
 		if err != nil {
 			return "", err
 		}

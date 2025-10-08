@@ -133,7 +133,7 @@ func startNode(cfg *Config) error {
 	}
 
 	n, err := node.NewNode(cmtcfg,
-		privval.LoadOrGenFilePV(cmtcfg.PrivValidatorKeyFile(), cmtcfg.PrivValidatorStateFile()),
+		privval.LoadOrGenFilePV(cmtcfg.PrivValidatorKeyFile(), cmtcfg.PrivValidatorStateFile(), nil),
 		nodeKey,
 		clientCreator,
 		node.DefaultGenesisDocProviderFunc(cmtcfg),
@@ -206,7 +206,7 @@ func startLightClient(cfg *Config) error {
 
 // startSigner starts a signer server connecting to the given endpoint.
 func startSigner(cfg *Config) error {
-	filePV := privval.LoadFilePV(cfg.PrivValKey, cfg.PrivValState)
+	filePV := privval.LoadFilePV(cfg.PrivValKey, cfg.PrivValState, nil)
 
 	protocol, address := cmtnet.ProtocolAndAddress(cfg.PrivValServer)
 	var dialFn privval.SocketDialer
@@ -268,7 +268,7 @@ func setupNode() (*config.Config, log.Logger, *p2p.NodeKey, error) {
 
 	nodeLogger = nodeLogger.With("module", "main")
 
-	nodeKey, err := p2p.LoadOrGenNodeKey(cmtcfg.NodeKeyFile())
+	nodeKey, err := p2p.LoadOrGenNodeKey(cmtcfg.NodeKeyFile(), nil)
 	if err != nil {
 		return nil, nil, nil, fmt.Errorf("failed to load or gen node key %s: %w", cmtcfg.NodeKeyFile(), err)
 	}

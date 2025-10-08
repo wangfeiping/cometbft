@@ -27,7 +27,7 @@ func TestGenLoadValidator(t *testing.T) {
 	privVal.Save()
 	addr := privVal.GetAddress()
 
-	privVal = LoadFilePV(tempKeyFileName, tempStateFileName)
+	privVal = LoadFilePV(tempKeyFileName, tempStateFileName, nil)
 	assert.Equal(t, addr, privVal.GetAddress(), "expected privval addr to be the same")
 	assert.Equal(t, height, privVal.LastSignState.Height, "expected privval.LastHeight to have been saved")
 }
@@ -73,9 +73,9 @@ func TestLoadOrGenValidator(t *testing.T) {
 		t.Error(err)
 	}
 
-	privVal := LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath)
+	privVal := LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil)
 	addr := privVal.GetAddress()
-	privVal = LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath)
+	privVal = LoadOrGenFilePV(tempKeyFilePath, tempStateFilePath, nil)
 	assert.Equal(addr, privVal.GetAddress(), "expected privval addr to be the same")
 }
 
@@ -242,7 +242,7 @@ func TestDifferByTimestamp(t *testing.T) {
 	tempStateFile, err := os.CreateTemp("", "priv_validator_state_")
 	require.Nil(t, err)
 
-	privVal := GenFilePV(tempKeyFile.Name(), tempStateFile.Name())
+	privVal := GenFilePV(tempKeyFile.Name(), tempStateFile.Name(), nil)
 	randbytes := cmtrand.Bytes(tmhash.Size)
 	block1 := types.BlockID{Hash: randbytes, PartSetHeader: types.PartSetHeader{Total: 5, Hash: randbytes}}
 	height, round := int64(10), int32(1)
@@ -387,7 +387,7 @@ func newTestFilePV(t *testing.T) (*FilePV, string, string) {
 	tempStateFile, err := os.CreateTemp(t.TempDir(), "priv_validator_state_")
 	require.NoError(t, err)
 
-	privVal := GenFilePV(tempKeyFile.Name(), tempStateFile.Name())
+	privVal := GenFilePV(tempKeyFile.Name(), tempStateFile.Name(), nil)
 
 	return privVal, tempKeyFile.Name(), tempStateFile.Name()
 }
