@@ -48,8 +48,8 @@ func PubKeyToID(pubKey crypto.PubKey) ID {
 // LoadOrGenNodeKey attempts to load the NodeKey from the given filePath. If
 // the file does not exist, it generates and saves a new NodeKey.
 func LoadOrGenNodeKey(filePath string,
-	decryptHandler func([]byte) ([]byte, error),
-	encryptHandler func([]byte) ([]byte, error)) (*NodeKey, error) {
+	encryptHandler func([]byte) ([]byte, error),
+	decryptHandler func(string, []byte) ([]byte, error)) (*NodeKey, error) {
 	if cmtos.FileExists(filePath) {
 		nodeKey, err := LoadNodeKey(filePath, decryptHandler)
 		if err != nil {
@@ -71,13 +71,13 @@ func LoadOrGenNodeKey(filePath string,
 }
 
 // LoadNodeKey loads NodeKey located in filePath.
-func LoadNodeKey(filePath string, decryptHandler func([]byte) ([]byte, error)) (*NodeKey, error) {
+func LoadNodeKey(filePath string, decryptHandler func(string, []byte) ([]byte, error)) (*NodeKey, error) {
 	jsonBytes, err := os.ReadFile(filePath)
 	if err != nil {
 		return nil, err
 	}
 	if decryptHandler != nil {
-		jsonBytes, err = decryptHandler(jsonBytes)
+		jsonBytes, err = decryptHandler(filePath, jsonBytes)
 		if err != nil {
 			return nil, err
 		}

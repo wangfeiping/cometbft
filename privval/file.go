@@ -186,7 +186,7 @@ func GenFilePV(keyFilePath, stateFilePath string,
 // signing prevention by persisting data to the stateFilePath.  If either file path
 // does not exist, the program will exit.
 func LoadFilePV(keyFilePath, stateFilePath string,
-	decryptHandler func([]byte) ([]byte, error)) *FilePV {
+	decryptHandler func(string, []byte) ([]byte, error)) *FilePV {
 	return loadFilePV(keyFilePath, stateFilePath, true, decryptHandler)
 }
 
@@ -198,13 +198,13 @@ func LoadFilePVEmptyState(keyFilePath, stateFilePath string) *FilePV {
 
 // If loadState is true, we load from the stateFilePath. Otherwise, we use an empty LastSignState.
 func loadFilePV(keyFilePath, stateFilePath string, loadState bool,
-	decryptHandler func([]byte) ([]byte, error)) *FilePV {
+	decryptHandler func(string, []byte) ([]byte, error)) *FilePV {
 	keyJSONBytes, err := os.ReadFile(keyFilePath)
 	if err != nil {
 		cmtos.Exit(err.Error())
 	}
 	if decryptHandler != nil {
-		keyJSONBytes, err = decryptHandler(keyJSONBytes)
+		keyJSONBytes, err = decryptHandler(keyFilePath, keyJSONBytes)
 		if err != nil {
 			cmtos.Exit(fmt.Sprintf("Error decrypting PrivValidator key from %v: %v\n", keyFilePath, err))
 		}
@@ -244,8 +244,8 @@ func loadFilePV(keyFilePath, stateFilePath string, loadState bool,
 // LoadOrGenFilePV loads a FilePV from the given filePaths
 // or else generates a new one and saves it to the filePaths.
 func LoadOrGenFilePV(keyFilePath, stateFilePath string,
-	decryptHandler func([]byte) ([]byte, error),
-	encryptHandler func([]byte) ([]byte, error)) *FilePV {
+	encryptHandler func([]byte) ([]byte, error),
+	decryptHandler func(string, []byte) ([]byte, error)) *FilePV {
 	var pv *FilePV
 	if cmtos.FileExists(keyFilePath) {
 		pv = LoadFilePV(keyFilePath, stateFilePath, decryptHandler)
