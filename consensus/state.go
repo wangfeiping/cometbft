@@ -2562,7 +2562,8 @@ func (cs *State) calculatePrecommitMessageDelayMetrics() {
 	for _, v := range pl {
 		_, val := cs.Validators.GetByAddress(v.ValidatorAddress)
 		votingPowerSeen += val.VotingPower
-		if votingPowerSeen >= cs.Validators.TotalVotingPower()*2/3+1 {
+		// if votingPowerSeen >= cs.Validators.TotalVotingPower()*2/3+1 {
+		if votingPowerSeen >= cs.Validators.TotalVotingPower()/2+1 {
 			cs.metrics.QuorumPrecommitDelay.With("proposer_address", cs.Validators.GetProposer().Address.String()).Set(v.Timestamp.Sub(cs.Proposal.Timestamp).Seconds())
 			break
 		}
@@ -2585,7 +2586,8 @@ func (cs *State) calculatePrevoteMessageDelayMetrics() {
 	for _, v := range pl {
 		_, val := cs.Validators.GetByAddress(v.ValidatorAddress)
 		votingPowerSeen += val.VotingPower
-		if votingPowerSeen >= cs.Validators.TotalVotingPower()*2/3+1 {
+		// if votingPowerSeen >= cs.Validators.TotalVotingPower()*2/3+1 {
+		if votingPowerSeen >= cs.Validators.TotalVotingPower()/2+1 {
 			cs.metrics.QuorumPrevoteDelay.With("proposer_address", cs.Validators.GetProposer().Address.String()).Set(v.Timestamp.Sub(cs.Proposal.Timestamp).Seconds())
 			break
 		}
